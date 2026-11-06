@@ -1,0 +1,51 @@
+﻿gppd_idnr,name,province,province_zh,owner,primary_fuel,capacity_mw,commissioning_year,ef_tco2_mwh,cost_share,margin_used,breakeven_effective_price_cny_t,flag,emissions_mtco2,carbon_cost_cny_m,net_carbon_cost_cny_m
+WRI1070659,Datang Tuoketuo power station,Inner Mongolia,内蒙古自治区,Tuoketuo Power Company,Coal,6720.0,2007.0,0.92,0.269,1.791,66.997,High,30.139,3616.69,3255.021
+WRI1075600,East Hope Metals Wucaiwan power station,Xinjiang,新疆维吾尔自治区,Xinjiang East Hope Non-Ferrous Metal Co Ltd.,Coal,7000.0,2014.0,0.851,0.249,1.657,72.43,High,29.04,3484.831,3136.348
+WRI1070165,Waigaoqiao power station,Shanghai,上海市,Shanghai Electric Group Company Limited,Coal,5240.0,2004.0,0.92,0.269,1.791,66.997,High,23.501,2820.156,2538.14
+WRI1072548,Zouxian power station,Shandong,山东省,China Huadian Corporation,Coal,4540.0,1998.0,1.032,0.301,2.008,59.755,High,22.83,2739.59,2465.631
+WRI1070245,Guodian Beilun power station,Zhejiang,浙江省,China Guodian Group Corporation,Coal,5060.0,2002.0,0.92,0.269,1.791,66.997,High,22.694,2723.281,2450.953
+WRI1070511,Jiaxing power station,Zhejiang,浙江省,Jiaxing Power Generation Co Ltd,Coal,5000.0,2006.0,0.92,0.269,1.791,66.997,High,22.425,2690.989,2421.89
+WRI1070085,Guohua Taishan power station,Guangdong,广东省,Shenhua Guohua Electric Power Corporation,Coal,5000.0,2007.0,0.92,0.269,1.791,66.997,High,22.425,2690.989,2421.89
+WRI1070187,Castle Peak power station,Guangdong,广东省,Castle Peak Power Company Limited (CAPCO),Coal,4108.0,1986.0,1.032,0.301,2.008,59.755,High,20.658,2478.907,2231.016
+WRI1070763,CPI Pingwei power station,Anhui,安徽省,China Power Investment Corporation (CPI),Coal,4540.0,2006.0,0.92,0.269,1.791,66.997,High,20.362,2443.418,2199.076
+WRI1070203,Datong - Tashan Coal,Shanxi,山西省,Tongmei Tashan Power Station,Coal,4520.0,2008.0,0.92,0.269,1.791,66.997,High,20.272,2432.654,2189.389
+WRI1070089,Guangdong Shajiao power complex,Guangdong,广东省,Guangdong Guanghope Power Co Ltd,Coal,3970.0,1992.0,1.032,0.301,2.008,59.755,High,19.964,2395.633,2156.07
+WRI1070515,Ninghai power station,Zhejiang,浙江省,Shenhua Guohua Electric Power Co Ltd,Coal,4400.0,2007.0,0.92,0.269,1.791,66.997,High,19.734,2368.07,2131.263
+WRI1070183,Huaneng Qinbei power station,Henan,河南省,Huaneng Power International Ruiyang Co Ltd,Coal,4400.0,2009.0,0.92,0.269,1.791,66.997,High,19.734,2368.07,2131.263
+WRI1070164,Shidongkou power station,Shanghai,上海市,China Huaneng Group Corporation (CHNG),Coal,3820.0,1997.0,1.032,0.301,2.008,59.755,High,19.209,2305.117,2074.605
+WRI1070649,Huaneng Yuhuan power station,Zhejiang,浙江省,China Huaneng Group Corporation (CHNG),Coal,4200.0,2006.0,0.92,0.269,1.791,66.997,High,18.837,2260.431,2034.388
+WRI1070440,Houshi power station,Fujian,福建省,Huayang Electric Power Co Ltd,Coal,4200.0,2002.0,0.92,0.269,1.791,66.997,High,18.837,2260.431,2034.388
+WRI1070449,Datong power station,Shanxi,山西省,Guodian Shanxi Branch Co Ltd,Coal,3990.0,2001.0,0.92,0.269,1.791,66.997,High,17.895,2147.409,1932.668
+WRI1070158,Ligang power station,Jiangsu,江苏省,CITIC Limited,Coal,3960.0,2003.0,0.92,0.269,1.791,66.997,High,17.761,2131.263,1918.137
+WRI1070797,Huaneng Haimen power station,Guangdong,广东省,China Huaneng Group Corporation (CHNG),Coal,4144.0,2011.0,0.851,0.249,1.657,72.43,High,17.192,2063.02,1856.718
+WRI1070527,Suizhong power station,Liaoning,辽宁省,CSEC Guohua Intl Power Co Ltd,Coal,3760.0,2005.0,0.92,0.269,1.791,66.997,High,16.864,2023.623,1821.261
+WRI1070661,Huaneng Shangdu power station,Inner Mongolia,内蒙古自治区,North United Power Co Ltd,Coal,3720.0,2008.0,0.92,0.269,1.791,66.997,High,16.684,2002.095,1801.886
+WRI1070626,Guodian Taizhou power station,Jiangsu,江苏省,China Guodian Group Corporation,Coal,4000.0,2012.0,0.851,0.249,1.657,72.43,High,16.594,1991.332,1792.199
+WRI1070716,Xinyuan Aluminum power station,Shandong,山东省,Chiping Xinyuan Aluminum Co Ltd,Coal,3960.0,2015.0,0.851,0.249,1.657,72.43,High,16.428,1971.418,1774.277
+WRI1070392,Jiangsu Nantong power station,Jiangsu,江苏省,China Huaneng Group Corporation (CHNG),Coal,3404.0,2006.0,0.92,0.269,1.791,66.997,High,15.267,1832.025,1648.822
+WRI1070381,Huaneng Yimin power station,Inner Mongolia,内蒙古自治区,Huaneng Yimin Coal & Electric Co Ltd,Coal,3400.0,2006.0,0.92,0.269,1.791,66.997,High,15.249,1829.872,1646.885
+WRI1070286,Wujiaqu power station,Xinjiang,新疆维吾尔自治区,Xinjiang Nongliushi Coal & Electricity Company,Coal,3640.0,2013.0,0.851,0.249,1.657,72.43,High,15.101,1812.112,1630.901
+WRI1070028,Xuzhou Pengcheng power station,Jiangsu,江苏省,China Resources Power Holdings Co Ltd,Coal,3340.0,2006.0,0.92,0.269,1.791,66.997,High,14.98,1797.58,1617.822
+WRI1070281,CPI Changshu-1 power station,Jiangsu,江苏省,China Power Investment Corporation (CPI),Coal,3320.0,2005.0,0.92,0.269,1.791,66.997,High,14.89,1786.817,1608.135
+WRI1070809,Huadian Ningxia Lingwu power station,Ningxia,宁夏回族自治区,Huadian Power International Company Limited,Coal,3320.0,2009.0,0.92,0.269,1.791,66.997,High,14.89,1786.817,1608.135
+WRI1070345,Yangcheng power station,Shanxi,山西省,Shanxi Datang International Power Generation Co Ltd,Coal,3300.0,2004.0,0.92,0.269,1.791,66.997,High,14.8,1776.052,1598.447
+WRI1070276,Hanchuan power station,Hubei,湖北省,Guodian Changyuan Electric Power Co Ltd,Coal,3260.0,2007.0,0.92,0.269,1.791,66.997,High,14.621,1754.525,1579.072
+WRI1070152,Chaozhou Sanbaimen power station,Guangdong,广东省,Datang International Power Generation Company,Coal,3200.0,2008.0,0.92,0.269,1.791,66.997,High,14.352,1722.233,1550.01
+WRI1070038,Dalate power station,Inner Mongolia,内蒙古自治区,North United Power Co Ltd,Coal,3180.0,2002.0,0.92,0.269,1.791,66.997,High,14.262,1711.469,1540.322
+WRI1070777,SDIC Qinzhou power station,Guangxi,广西壮族自治区,SDIC Huajing Power Holdings Ltd,Coal,3360.0,2013.0,0.851,0.249,1.657,72.43,High,13.939,1672.719,1505.447
+WRI1070234,Zhangjiagang Shazhou power station,Jiangsu,江苏省,Beijing Sanjili Energy Co Ltd,Coal,3260.0,2013.0,0.851,0.249,1.657,72.43,High,13.524,1622.936,1460.642
+WRI1070756,Jianbi power station,Jiangsu,江苏省,China Guodian Group Corporation,Coal,2990.0,2002.0,0.92,0.269,1.791,66.997,High,13.41,1609.211,1448.29
+WRI1070715,Huaneng Dezhou power station,Shandong,山东省,Huaneng Shandong Power Co Ltd,Coal,2650.0,1998.0,1.032,0.301,2.008,59.755,High,13.326,1599.1,1439.19
+WRI1070072,Fujian Hongshan power station,Fujian,福建省,Fujian Hongshan Thermal Power,Coal,3200.0,2014.0,0.851,0.249,1.657,72.43,High,13.276,1593.066,1433.759
+WRI1070022,Guangdong Huilai power station,Guangdong,广东省,Guangdong Yudean Group Co Ltd,Coal,3200.0,2011.0,0.851,0.249,1.657,72.43,High,13.276,1593.066,1433.759
+WRI1070676,Datang Sanmenxia power station,Henan,河南省,Datang Sanmenxia Power Station,Coal,2900.0,2007.0,0.92,0.269,1.791,66.997,High,13.006,1560.774,1404.696
+WRI1070623,Zhangjiakou power station,Hebei,河北省,Datang Zhangjiakou Power Station,Coal,2560.0,1996.0,1.032,0.301,2.008,59.755,High,12.873,1544.79,1390.311
+WRI1070189,CKI Lamma power station,Guangdong,广东省,Hongkong Electric Company (HKC),Coal,2500.0,1989.0,1.032,0.301,2.008,59.755,High,12.572,1508.584,1357.726
+WRI1070768,Huainan Luohe power station,Anhui,安徽省,Datang International Power Generation,Coal,2500.0,1999.0,1.032,0.301,2.008,59.755,High,12.572,1508.584,1357.726
+WRI1070607,Tianjin Beijiang power station,Tianjin,天津市,SDIC Huajing Power Holdings Co Ltd,Coal,3000.0,2012.0,0.851,0.249,1.657,72.43,High,12.446,1493.499,1344.149
+WRI1070074,Huaneng Fuzhou power station,Fujian,福建省,China Huaneng Group Corporation (CHNG),Coal,2720.0,2002.0,0.92,0.269,1.791,66.997,High,12.199,1463.897,1317.508
+WRI1070125,Huaneng Laiwu power station,Shandong,山东省,Huaneng Shandong Power Co Ltd,Coal,2660.0,2009.0,0.92,0.269,1.791,66.997,High,11.93,1431.606,1288.445
+WRI1070004,Xinhai power station,Jiangsu,江苏省,Jiangsu Xinhai Power Co Ltd,Coal,2660.0,2009.0,0.92,0.269,1.791,66.997,High,11.93,1431.606,1288.445
+WRI1070764,WEnergy Maanshan Power Station,Anhui,安徽省,Anhui Tongling Power Generation Co Ltd,Coal,2640.0,2005.0,0.92,0.269,1.791,66.997,High,11.84,1420.842,1278.758
+WRI1070690,Huaneng Luohuang power station,Chongqing,重庆市,China Huaneng Group Corporation (CHNG),Coal,2640.0,2000.0,0.92,0.269,1.791,66.997,High,11.84,1420.842,1278.758
+WRI1070048,Tongling Wanneng power station,Anhui,安徽省,Anhui Tongling Power Generation Co Ltd,Coal,2600.0,2009.0,0.92,0.269,1.791,66.997,High,11.661,1399.314,1259.383

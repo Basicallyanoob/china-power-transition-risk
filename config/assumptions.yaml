@@ -1,0 +1,89 @@
+# ---------------------------------------------------------------------------
+# All model assumptions live here. Change them, re-run `python -m transition_risk`,
+# and every output updates.
+#
+# Values marked ILLUSTRATIVE are placeholders that show how the model works.
+# Before quoting results, replace them with sourced values (e.g. NGFS Phase V
+# scenario carbon prices) and record the source next to each value.
+# ---------------------------------------------------------------------------
+
+study_years: [2025, 2030, 2035, 2040]
+
+# Emission factors are derived, not typed in:
+#   tCO2/MWh = fuel CO2 factor (kgCO2/GJ) x 3.6 GJ/MWh / 1000 / plant net efficiency
+# Fuel CO2 factors: IPCC 2006 Guidelines for National GHG Inventories, Vol. 2, Ch. 2,
+# Table 2.2 (default CO2 emission factors for stationary combustion).
+fuel_co2_kg_per_gj:
+  Coal: 94.6      # other bituminous coal
+  Gas: 56.1       # natural gas
+  Oil: 77.4       # residual fuel oil
+  Petcoke: 97.5   # petroleum coke
+
+# Net plant efficiency (fraction). ASSUMPTION: typical values by technology era.
+# Coal efficiency is banded by commissioning year to reflect fleet vintage.
+efficiency:
+  Coal:
+    default: 0.37
+    by_commissioning_year:      # [first_year, last_year, efficiency]
+      - [1900, 1999, 0.33]
+      - [2000, 2009, 0.37]
+      - [2010, 2100, 0.40]
+  Gas: 0.50
+  Oil: 0.35
+  Petcoke: 0.35
+
+# Generation source. GPPD's estimated_generation_gwh_2017 is a modelled value
+# (for Chinese coal plants a uniform capacity factor). Set `capacity_factor_override`
+# per fuel to replace it with your own assumption (fraction of hours at full output).
+generation:
+  column: estimated_generation_gwh_2017
+  capacity_factor_override: {}   # e.g. {Coal: 0.50}
+
+# Revenue proxy: generation x average on-grid tariff. ASSUMPTION.
+# pass_through = share of carbon cost a plant recovers through higher power prices.
+#   China: on-grid tariffs are largely regulated, so recovery is limited.
+#   Ireland: in a marginal-price wholesale market, carbon cost is mostly priced in.
+countries:
+  CHN:
+    name: China
+    currency: CNY
+    tariff_per_mwh: 370      # ASSUMPTION: approx. national coal benchmark on-grid tariff, CNY/MWh
+    ebitda_margin: 0.15      # ASSUMPTION: baseline EBITDA margin of a thermal plant before carbon cost
+    pass_through: 0.10       # ASSUMPTION
+  IRL:
+    name: Ireland
+    currency: EUR
+    tariff_per_mwh: 100      # ASSUMPTION: average wholesale price, EUR/MWh
+    ebitda_margin: 0.15
+    pass_through: 0.80       # ASSUMPTION
+
+# Scenarios. carbon_price is per tCO2 in local currency.
+# uncovered_share = share of emissions that must be paid for (1 - free allocation).
+# China's national ETS gives the power sector benchmark-based free allocation, so the
+# paid share starts low. EU ETS power generators generally receive no free allocation,
+# so Ireland's paid share is 1.0.
+# ALL PRICE AND SHARE VALUES BELOW ARE ILLUSTRATIVE.
+scenarios:
+  current_policies:
+    label: Current policies (illustrative)
+    CHN: {carbon_price: {2025: 90, 2030: 120, 2035: 150, 2040: 180},  uncovered_share: {2025: 0.05, 2030: 0.10, 2035: 0.15, 2040: 0.20}}
+    IRL: {carbon_price: {2025: 70, 2030: 90,  2035: 110, 2040: 130},  uncovered_share: {2025: 1.0, 2030: 1.0, 2035: 1.0, 2040: 1.0}}
+  delayed_transition:
+    label: Delayed transition (illustrative)
+    CHN: {carbon_price: {2025: 90, 2030: 110, 2035: 350, 2040: 600},  uncovered_share: {2025: 0.05, 2030: 0.10, 2035: 0.50, 2040: 0.80}}
+    IRL: {carbon_price: {2025: 70, 2030: 85,  2035: 200, 2040: 300},  uncovered_share: {2025: 1.0, 2030: 1.0, 2035: 1.0, 2040: 1.0}}
+  net_zero:
+    label: Net zero 2060 (illustrative)
+    CHN: {carbon_price: {2025: 90, 2030: 300, 2035: 500, 2040: 800},  uncovered_share: {2025: 0.05, 2030: 0.40, 2035: 0.70, 2040: 1.00}}
+    IRL: {carbon_price: {2025: 70, 2030: 150, 2035: 220, 2040: 300},  uncovered_share: {2025: 1.0, 2030: 1.0, 2035: 1.0, 2040: 1.0}}
+
+# Risk flags, as a share of revenue.
+flags:
+  # "High"  = carbon cost exceeds the baseline EBITDA margin (plant goes cash-negative)
+  # "Watch" = carbon cost exceeds this fraction of the margin
+  watch_fraction_of_margin: 0.5
+
+# Scenario/year used for the headline watchlist and map.
+headline:
+  scenario: net_zero
+  year: 2030

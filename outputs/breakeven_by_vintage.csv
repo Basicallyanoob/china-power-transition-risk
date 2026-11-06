@@ -1,0 +1,9 @@
+country,currency,primary_fuel,ef_tco2_mwh,plants,capacity_gw,breakeven_effective_price
+CHN,CNY,Coal,1.03,113,103.35,59.75
+CHN,CNY,Coal,0.92,474,489.8,67.0
+CHN,CNY,Coal,0.85,359,362.56,72.43
+CHN,CNY,Oil,0.8,5,1.33,77.46
+CHN,CNY,Gas,0.4,170,59.77,152.67
+IRL,EUR,Coal,1.03,1,0.92,72.67
+IRL,EUR,Oil,0.8,6,1.15,94.21
+IRL,EUR,Gas,0.4,10,3.69,185.68

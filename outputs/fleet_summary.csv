@@ -1,0 +1,15 @@
+country,primary_fuel,plants,capacity_gw,emissions_mtco2
+CHN,Coal,946,955.72,4220.6
+CHN,Hydro,947,259.03,0.0
+CHN,Gas,170,59.77,73.17
+CHN,Solar,1318,54.8,0.0
+CHN,Wind,835,50.99,0.0
+CHN,Nuclear,12,33.4,0.0
+CHN,Oil,5,1.33,1.29
+CHN,Geothermal,2,0.03,0.0
+IRL,Gas,10,3.69,5.12
+IRL,Wind,38,1.29,0.0
+IRL,Oil,6,1.15,0.16
+IRL,Coal,1,0.92,5.99
+IRL,Hydro,3,0.4,0.0
+IRL,Biomass,1,0.14,0.0
