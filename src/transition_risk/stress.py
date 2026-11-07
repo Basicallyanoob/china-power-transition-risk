@@ -4,6 +4,16 @@ from __future__ import annotations
 import pandas as pd
 
 
+def breakeven_price(ef_tco2_mwh, tariff_per_mwh, ebitda_margin, pass_through=0.0):
+    """Effective carbon price (per tCO2) at which the absorbed carbon cost uses up the whole margin.
+
+    Solves  ef x price x (1 - pass_through) / tariff = ebitda_margin  for price.
+    Works on numbers or pandas Series. pass_through must be below 1 (at 100% the plant
+    recovers all of its carbon cost and never breaks even).
+    """
+    return ebitda_margin * tariff_per_mwh / (ef_tco2_mwh * (1 - pass_through))
+
+
 def stress(plants: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     """Long table: one row per fossil plant x scenario x year.
 
@@ -45,8 +55,8 @@ def stress(plants: pd.DataFrame, cfg: dict) -> pd.DataFrame:
                 out["revenue"] = out["generation_mwh"] * ccfg["tariff_per_mwh"]
                 out["cost_share"] = out["net_carbon_cost"] / out["revenue"]
                 out["margin_used"] = out["cost_share"] / ccfg["ebitda_margin"]
-                out["breakeven_price"] = (
-                    ccfg["ebitda_margin"] * ccfg["tariff_per_mwh"] / (out["ef_tco2_mwh"] * (1 - pt))
+                out["breakeven_price"] = breakeven_price(
+                    out["ef_tco2_mwh"], ccfg["tariff_per_mwh"], ccfg["ebitda_margin"], pt
                 )
                 rows.append(out)
     res = pd.concat(rows, ignore_index=True)

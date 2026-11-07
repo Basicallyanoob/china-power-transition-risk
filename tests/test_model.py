@@ -3,7 +3,7 @@ import math
 import pandas as pd
 import pytest
 
-from transition_risk import emissions, stress
+from transition_risk import emissions, report, stress
 
 CFG = {
     "study_years": [2030],
@@ -76,3 +76,33 @@ def test_pass_through_reduces_absorbed_cost():
     new = res[res["gppd_idnr"] == "b"].iloc[0]
     assert new["net_carbon_cost"] == pytest.approx(new["carbon_cost"] * 0.5)
     assert new["flag"] == "Watch"  # 0.213 x 0.5 = 0.106 -> 0.71 of margin
+
+
+def test_breakeven_price_formula():
+    # 0.15 x 400 / 0.8514 = 70.47 CNY/t with no pass-through
+    assert stress.breakeven_price(0.8514, 400, 0.15) == pytest.approx(70.47, rel=1e-3)
+    # recovering 30% of the cost means the plant can absorb a price 1 / 0.7 times higher
+    assert stress.breakeven_price(0.8514, 400, 0.15, 0.3) == pytest.approx(70.47 / 0.7, rel=1e-3)
+    # break-even scales one-for-one with the margin
+    assert stress.breakeven_price(0.8514, 400, 0.30) == pytest.approx(2 * 70.47, rel=1e-3)
+
+
+def test_breakeven_sensitivity_grid():
+    cfg = {**CFG, "sensitivity": {
+        "country": "CHN", "fuel": "Coal", "ebitda_margin": [0.10, 0.15, 0.20], "pass_through": [0.0, 0.3],
+    }}
+    res = stress.stress(emissions.add_emissions(_plants(), cfg), cfg)
+    sens = report.breakeven_sensitivity(res, cfg)
+    assert len(sens) == 3 * 2
+    # base case (15% margin, no pass-through in CFG) matches the main stress run
+    base = sens[sens["is_base_case"]]
+    assert len(base) == 1
+    coal = res[res["primary_fuel"] == "Coal"]
+    assert base["breakeven_least_efficient"].iloc[0] == pytest.approx(coal["breakeven_price"].min(), abs=0.01)
+    assert base["breakeven_most_efficient"].iloc[0] == pytest.approx(70.47, abs=0.01)
+    # two 1,000 MW coal plants, so the capacity-weighted value is their simple average
+    assert base["breakeven_capacity_weighted"].iloc[0] == pytest.approx(coal["breakeven_price"].mean(), abs=0.01)
+    # a higher margin or more pass-through always raises the break-even price
+    grid = sens.pivot(index="ebitda_margin", columns="pass_through", values="breakeven_capacity_weighted")
+    assert (grid.diff(axis=0).dropna() > 0).all().all()
+    assert (grid.diff(axis=1).dropna(axis=1) > 0).all().all()

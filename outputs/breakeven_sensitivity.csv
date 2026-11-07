@@ -1,0 +1,10 @@
+country,currency,primary_fuel,ebitda_margin,pass_through,is_base_case,breakeven_least_efficient,breakeven_capacity_weighted,breakeven_most_efficient
+CHN,CNY,Coal,0.1,0.0,False,35.85,40.97,43.46
+CHN,CNY,Coal,0.1,0.1,False,39.84,45.52,48.29
+CHN,CNY,Coal,0.1,0.3,False,51.22,58.52,62.08
+CHN,CNY,Coal,0.15,0.0,False,53.78,61.45,65.19
+CHN,CNY,Coal,0.15,0.1,True,59.75,68.28,72.43
+CHN,CNY,Coal,0.15,0.3,False,76.83,87.78,93.12
+CHN,CNY,Coal,0.2,0.0,False,71.71,81.93,86.92
+CHN,CNY,Coal,0.2,0.1,False,79.67,91.03,96.57
+CHN,CNY,Coal,0.2,0.3,False,102.44,117.04,124.17

@@ -83,6 +83,16 @@ flags:
   # "Watch" = carbon cost exceeds this fraction of the margin
   watch_fraction_of_margin: 0.5
 
+# Break-even sensitivity (outputs/breakeven_sensitivity.csv): how the break-even
+# effective carbon price moves if the margin or pass-through assumption is wrong.
+# ASSUMPTION: a test grid around the China base case (15% margin, 10% pass-through),
+# not sourced values. The tariff and emission factors are the same as in the main run.
+sensitivity:
+  country: CHN
+  fuel: Coal
+  ebitda_margin: [0.10, 0.15, 0.20]
+  pass_through: [0.0, 0.10, 0.30]
+
 # Scenario/year used for the headline watchlist and map.
 headline:
   scenario: net_zero

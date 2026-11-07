@@ -9,6 +9,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from .stress import breakeven_price
+
 # Font fallback so Chinese province names render on Linux, Windows and macOS.
 plt.rcParams["font.family"] = ["DejaVu Sans", "Noto Sans CJK SC", "Microsoft YaHei", "SimHei", "PingFang SC"]
 
@@ -91,6 +93,39 @@ def breakeven_by_vintage(res: pd.DataFrame) -> pd.DataFrame:
         breakeven_effective_price=("breakeven_price", "first"),
     )
     return g.sort_values(["country", "breakeven_effective_price"]).round(2)
+
+
+def breakeven_sensitivity(res: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """Break-even effective carbon price over a grid of EBITDA margin x pass-through.
+
+    For one country and fuel (config `sensitivity`), recomputes every plant's break-even
+    price for each margin and pass-through in the grid, keeping the tariff and emission
+    factors fixed. One row per grid point: the range across plants (least to most
+    efficient) and the capacity-weighted average.
+    """
+    sens = cfg["sensitivity"]
+    iso3, fuel = sens["country"], sens["fuel"]
+    ccfg = cfg["countries"][iso3]
+    one = res[(res["country"] == iso3) & (res["primary_fuel"] == fuel)].drop_duplicates("gppd_idnr")
+    rows = []
+    for margin in sens["ebitda_margin"]:
+        for pt in sens["pass_through"]:
+            be = breakeven_price(one["ef_tco2_mwh"], ccfg["tariff_per_mwh"], margin, pt)
+            rows.append({
+                "country": iso3,
+                "currency": ccfg["currency"],
+                "primary_fuel": fuel,
+                "ebitda_margin": margin,
+                "pass_through": pt,
+                "is_base_case": bool(
+                    abs(margin - ccfg["ebitda_margin"]) < 1e-9
+                    and abs(pt - ccfg.get("pass_through", 0.0)) < 1e-9
+                ),
+                "breakeven_least_efficient": be.min(),
+                "breakeven_capacity_weighted": (be * one["capacity_mw"]).sum() / one["capacity_mw"].sum(),
+                "breakeven_most_efficient": be.max(),
+            })
+    return pd.DataFrame(rows).round(2)
 
 
 # ---------------------------------------------------------------- figures
