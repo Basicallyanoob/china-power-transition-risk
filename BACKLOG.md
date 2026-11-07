@@ -6,8 +6,8 @@ Mark a task `[x]` when its commit is pushed. Tasks marked **(you)** need somethi
 ## Project 1 — china-power-transition-risk
 
 ### Make the model credible
-- [ ] Add `outputs/` regeneration check: a test that runs the pipeline on a 20-plant sample and checks columns and row counts
-- [ ] Add a sensitivity table: break-even effective price vs EBITDA margin (10/15/20%) and pass-through (0/10/30%)
+- [x] Add `outputs/` regeneration check: a test that runs the pipeline on a 20-plant sample and checks columns and row counts
+- [x] Add a sensitivity table: break-even effective price vs EBITDA margin (10/15/20%) and pass-through (0/10/30%)
 - [ ] Add a sensitivity chart for the table above and a README paragraph explaining it
 - [ ] **(you)** Download NGFS Phase V carbon-price paths for China and the EU (current policies, delayed transition, net zero 2050) and save them to `data/ngfs/`
 - [ ] Load NGFS paths from file into the scenario config; keep the illustrative set as a fallback
