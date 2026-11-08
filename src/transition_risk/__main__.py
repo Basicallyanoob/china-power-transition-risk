@@ -48,6 +48,7 @@ def run(plants: pd.DataFrame, admin1: gpd.GeoDataFrame, cfg: dict, out: Path) ->
     report.fig_scenarios(path, cfg, figs / "flagged_capacity_by_scenario.png")
     report.fig_breakeven(res, be, cfg, figs / "breakeven_vs_scenarios.png")
     report.fig_provinces(prov, h_label, h_year, figs / "province_carbon_cost.png")
+    report.fig_sensitivity(sens, cfg, figs / "breakeven_sensitivity.png")
 
     summary = {
         "plants_loaded": int(len(plants)),

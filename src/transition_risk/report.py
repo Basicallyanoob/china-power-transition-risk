@@ -153,6 +153,69 @@ def fig_breakeven(res: pd.DataFrame, be: pd.DataFrame, cfg: dict, out: Path) -> 
     plt.close(fig)
 
 
+# One blue, light to dark, for the ordered pass-through rates (low to high).
+# Checked as an ordinal ramp: lightness rises step by step and the light end stays visible on white.
+PASS_THROUGH_BLUES = ["#6da7ec", "#2a78d6", "#104281"]
+
+
+def fig_sensitivity(sens: pd.DataFrame, cfg: dict, out: Path) -> None:
+    """Break-even effective carbon price vs EBITDA margin, one line per pass-through rate.
+
+    Dots are the capacity-weighted average across plants; thin bars span the least to
+    the most efficient plant. The base-case grid point is ringed and labelled.
+    """
+    pts = sorted(sens["pass_through"].unique())
+    if len(pts) > len(PASS_THROUGH_BLUES):
+        raise ValueError(f"fig_sensitivity draws up to {len(PASS_THROUGH_BLUES)} pass-through rates; got {len(pts)}")
+    colours = dict(zip(pts, PASS_THROUGH_BLUES))
+    margins = sorted(sens["ebitda_margin"].unique())
+    step = (margins[1] - margins[0]) * 100 if len(margins) > 1 else 5
+    offsets = {pt: (i - (len(pts) - 1) / 2) * step * 0.08 for i, pt in enumerate(pts)}
+    cur = sens["currency"].iloc[0]
+
+    fig, ax = plt.subplots(figsize=(8.5, 4.8))
+    for pt in pts:
+        g = sens[sens["pass_through"] == pt].sort_values("ebitda_margin")
+        x = g["ebitda_margin"] * 100 + offsets[pt]
+        ax.vlines(x, g["breakeven_least_efficient"], g["breakeven_most_efficient"],
+                  color=colours[pt], linewidth=2, alpha=0.45)
+        ax.plot(x, g["breakeven_capacity_weighted"], color=colours[pt], linewidth=2,
+                marker="o", markersize=7, markeredgecolor="white", markeredgewidth=1.5,
+                label=f"{pt:.0%} pass-through")
+        last = g.iloc[-1]
+        ax.text(x.iloc[-1] + step * 0.12, last["breakeven_capacity_weighted"],
+                f"{pt:.0%} pass-through", fontsize=9, color="#374151", va="center")
+
+    base = sens[sens["is_base_case"]]
+    if not base.empty:
+        b = base.iloc[0]
+        bx = b["ebitda_margin"] * 100 + offsets[b["pass_through"]]
+        by = b["breakeven_capacity_weighted"]
+        ax.plot(bx, by, marker="o", markersize=15, markerfacecolor="none",
+                markeredgecolor="#111827", markeredgewidth=1.5, linestyle="none")
+        ax.annotate(f"Base case: {b['ebitda_margin']:.0%} margin, {b['pass_through']:.0%} pass-through\n"
+                    f"{by:.0f} {cur}/t (plants {b['breakeven_least_efficient']:.0f}–"
+                    f"{b['breakeven_most_efficient']:.0f})",
+                    xy=(bx, by), xytext=(bx - step * 0.9, by + 30), fontsize=9, color="#111827",
+                    ha="left", arrowprops=dict(arrowstyle="-", color="#6b7280", lw=0.8))
+
+    ax.set_xticks([m * 100 for m in margins], [f"{m:.0%}" for m in margins])
+    ax.set_xlim(margins[0] * 100 - step * 0.5, margins[-1] * 100 + step * 0.9)
+    ax.set_ylim(0, sens["breakeven_most_efficient"].max() * 1.15)
+    ax.set_xlabel("Baseline EBITDA margin before carbon cost (ASSUMPTION)")
+    ax.set_ylabel(f"Break-even effective carbon price, {cur}/tCO2")
+    ax.set_title(f"{cfg['countries'][sens['country'].iloc[0]]['name']} {sens['primary_fuel'].iloc[0].lower()}: "
+                 "break-even effective carbon price\nunder different margin and pass-through assumptions",
+                 loc="left", fontsize=11)
+    ax.legend(frameon=False, fontsize=9, loc="upper left")
+    fig.text(0.01, 0.01, "Dots: capacity-weighted average across plants. Bars: least to most efficient plant. "
+             "Tariff and emission factors as in the main run.", fontsize=8, color="#6b7280")
+    _style(ax)
+    fig.tight_layout(rect=(0, 0.04, 1, 1))
+    fig.savefig(out, dpi=160)
+    plt.close(fig)
+
+
 def fig_scenarios(path: pd.DataFrame, cfg: dict, out: Path) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(11, 4))
     for ax, iso3 in zip(axes, ["CHN", "IRL"]):

@@ -94,7 +94,10 @@ EXPECTED_ROWS = {
     "breakeven_sensitivity.csv": 9,
 }
 
-FIGURES = ["flagged_capacity_by_scenario.png", "breakeven_vs_scenarios.png", "province_carbon_cost.png"]
+FIGURES = [
+    "flagged_capacity_by_scenario.png", "breakeven_vs_scenarios.png", "province_carbon_cost.png",
+    "breakeven_sensitivity.png",
+]
 
 
 def _sample_plants() -> pd.DataFrame:

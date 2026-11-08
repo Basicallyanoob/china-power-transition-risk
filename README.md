@@ -28,6 +28,14 @@ An open-source Python model that stress-tests 1,121 Chinese fossil power plants 
 ![Province exposure](outputs/figures/province_carbon_cost.png)
 ![Flagged capacity by scenario](outputs/figures/flagged_capacity_by_scenario.png)
 
+## How sensitive is the break-even price?
+
+The 60–72 CNY/t band rests on two unsourced assumptions: a 15% EBITDA margin and 10% cost pass-through. [`outputs/breakeven_sensitivity.csv`](outputs/breakeven_sensitivity.csv) re-runs the break-even for every Chinese coal plant over a grid of margins (10/15/20%) and pass-through rates (0/10/30%), holding the tariff and emission factors fixed.
+
+![Break-even sensitivity](outputs/figures/breakeven_sensitivity.png)
+
+Break-even = margin × tariff ÷ (emission factor × (1 − pass-through)). It therefore moves one-for-one with the margin: going from 10% to 20% doubles it (capacity-weighted 41 → 82 CNY/t with no pass-through). Pass-through acts through 1 ÷ (1 − pass-through), so raising it from 0% to 30% lifts break-even by about 43% (61 → 88 CNY/t at a 15% margin). Across the whole grid, plant-level break-even runs from **36 to 124 CNY/t**. The scenario conclusions mostly hold anyway. The illustrative net-zero path's 2030 effective price (300 CNY/t × 40% paid = 120) is above every grid point except the most efficient plants at 20% margin and 30% pass-through. The current-policies path reaches only 36 CNY/t by 2040, which touches just the least efficient plants in the harshest corner of the grid (10% margin, no pass-through). The margin is the assumption to source first.
+
 ## How it works
 
 ```
@@ -54,7 +62,7 @@ python -m transition_risk --download     # fetches the data, runs everything, wr
 pytest                                    # unit tests for the emission and stress maths
 ```
 
-Outputs: `plant_watchlist_top50.csv`, `province_exposure.csv`, `owner_exposure.csv`, `breakeven_by_vintage.csv`, `scenario_paths.csv`, `fleet_summary.csv` and the figures in `outputs/figures/`. CSVs with Chinese province names are UTF-8 with BOM so they open cleanly in Excel.
+Outputs: `plant_watchlist_top50.csv`, `province_exposure.csv`, `owner_exposure.csv`, `breakeven_by_vintage.csv`, `breakeven_sensitivity.csv`, `scenario_paths.csv`, `fleet_summary.csv` and the figures in `outputs/figures/`. CSVs with Chinese province names are UTF-8 with BOM so they open cleanly in Excel.
 
 ## Limitations
 
@@ -78,5 +86,5 @@ Code is MIT-licensed. Built by Michael S H Xiang (Columbia–Trinity Dual BA, Ea
 
 - [ ] Replace illustrative paths with NGFS Phase V carbon prices
 - [ ] Province-level tariffs and capacity factors
-- [ ] Sensitivity table: break-even vs margin and pass-through
+- [x] Sensitivity table and chart: break-even vs margin and pass-through
 - [ ] Map output using an approved basemap
