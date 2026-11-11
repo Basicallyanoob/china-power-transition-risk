@@ -4,3 +4,5 @@ __pycache__/
 .pytest_cache/
 .venv/
 .DS_Store
+# Variant runs from --scenario/--year (outputs/<scenario>_<year>/); only the config headline run is committed
+outputs/*_[0-9][0-9][0-9][0-9]/

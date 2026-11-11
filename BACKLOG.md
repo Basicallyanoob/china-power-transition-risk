@@ -8,12 +8,12 @@ Mark a task `[x]` when its commit is pushed. Tasks marked **(you)** need somethi
 ### Make the model credible
 - [x] Add `outputs/` regeneration check: a test that runs the pipeline on a 20-plant sample and checks columns and row counts
 - [x] Add a sensitivity table: break-even effective price vs EBITDA margin (10/15/20%) and pass-through (0/10/30%)
-- [ ] Add a sensitivity chart for the table above and a README paragraph explaining it
+- [x] Add a sensitivity chart for the table above and a README paragraph explaining it
 - [ ] **(you)** Download NGFS Phase V carbon-price paths for China and the EU (current policies, delayed transition, net zero 2050) and save them to `data/ngfs/`
 - [ ] Load NGFS paths from file into the scenario config; keep the illustrative set as a fallback
 - [ ] Re-run with NGFS prices; update README findings and remove "illustrative" wording where it no longer applies
 - [ ] **(you)** Decide the free-allocation path assumptions to pair with NGFS prices, and note your reasoning in the config
-- [ ] Add a `--scenario` and `--year` CLI option for the headline outputs
+- [x] Add a `--scenario` and `--year` CLI option for the headline outputs
 
 ### Better economics
 - [ ] **(you)** Find a sourced table of provincial coal benchmark on-grid tariffs and save it to `data/`

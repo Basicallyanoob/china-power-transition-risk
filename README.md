@@ -62,6 +62,14 @@ python -m transition_risk --download     # fetches the data, runs everything, wr
 pytest                                    # unit tests for the emission and stress maths
 ```
 
+The province, owner and watchlist tables and the province chart use one headline scenario and year (net zero 2060, 2030, set under `headline:` in the config). To look at another one without editing the config:
+
+```bash
+python -m transition_risk --scenario delayed_transition --year 2040   # writes outputs/delayed_transition_2040/
+```
+
+`--scenario` takes any scenario defined in the config (`current_policies`, `delayed_transition`, `net_zero`) and `--year` any study year (2025, 2030, 2035, 2040). These runs go to their own folder, so the committed `outputs/` always matches the config. Use `--out` to choose a different folder.
+
 Outputs: `plant_watchlist_top50.csv`, `province_exposure.csv`, `owner_exposure.csv`, `breakeven_by_vintage.csv`, `breakeven_sensitivity.csv`, `scenario_paths.csv`, `fleet_summary.csv` and the figures in `outputs/figures/`. CSVs with Chinese province names are UTF-8 with BOM so they open cleanly in Excel.
 
 ## Limitations

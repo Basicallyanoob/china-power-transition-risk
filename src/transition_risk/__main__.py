@@ -1,4 +1,4 @@
-"""Run the full pipeline:  python -m transition_risk [--config path] [--download]"""
+"""Run the full pipeline:  python -m transition_risk [--config path] [--download] [--scenario name] [--year year]"""
 from __future__ import annotations
 
 import argparse
@@ -60,21 +60,58 @@ def run(plants: pd.DataFrame, admin1: gpd.GeoDataFrame, cfg: dict, out: Path) ->
     return summary
 
 
-def main() -> None:
+def set_headline(cfg: dict, scenario: str | None = None, year: int | None = None) -> dict:
+    """Return a copy of `cfg` with the headline scenario and/or year replaced.
+
+    The headline scenario-year drives the province, owner and watchlist tables and the
+    province chart. Anything not given keeps its value from the config. Raises ValueError
+    if the scenario or year isn't one the config models.
+    """
+    scenario = scenario or cfg["headline"]["scenario"]
+    year = year if year is not None else cfg["headline"]["year"]
+    if scenario not in cfg["scenarios"]:
+        raise ValueError(f"unknown scenario {scenario!r}; choose from {', '.join(cfg['scenarios'])}")
+    if year not in cfg["study_years"]:
+        raise ValueError(f"year {year} is not a study year; choose from {', '.join(map(str, cfg['study_years']))}")
+    return {**cfg, "headline": {"scenario": scenario, "year": year}}
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--config", default=ROOT / "config" / "assumptions.yaml", type=Path)
     ap.add_argument("--download", action="store_true", help="fetch the input datasets first")
-    ap.add_argument("--out", default=ROOT / "outputs", type=Path)
-    args = ap.parse_args()
+    ap.add_argument("--scenario", help="headline scenario (default: config headline.scenario)")
+    ap.add_argument("--year", type=int, help="headline year (default: config headline.year)")
+    ap.add_argument("--out", type=Path,
+                    help="output folder (default: outputs/, or outputs/<scenario>_<year>/ "
+                         "when --scenario or --year is given)")
+    return ap.parse_args(argv)
 
-    cfg = yaml.safe_load(args.config.read_text())
+
+def main(argv: list[str] | None = None) -> None:
+    args = parse_args(argv)
+    cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
+    try:
+        cfg = set_headline(cfg, args.scenario, args.year)
+    except ValueError as e:
+        raise SystemExit(f"error: {e}")
+
+    out = args.out
+    if out is None:
+        out = ROOT / "outputs"
+        if args.scenario is not None or args.year is not None:
+            # Keep the committed outputs/ as the config's headline run; write variants alongside.
+            out = out / f"{cfg['headline']['scenario']}_{cfg['headline']['year']}"
+    out.mkdir(parents=True, exist_ok=True)
+
     if args.download or not data.GPPD_PATH.exists() or not data.ADMIN1_PATH.exists():
         data.download()
 
     plants = data.load_plants(list(cfg["countries"]))
     admin1 = data.load_admin1(list(cfg["countries"]))
-    summary = run(plants, admin1, cfg, args.out)
+    summary = run(plants, admin1, cfg, out)
     print(json.dumps(summary, indent=2))
+    print(f"Outputs written to {out}")
 
 
 if __name__ == "__main__":
