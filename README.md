@@ -76,7 +76,7 @@ Outputs: `plant_watchlist_top50.csv`, `province_exposure.csv`, `owner_exposure.c
 
 - **Illustrative scenarios.** The carbon-price and free-allocation paths are placeholders. Before using results, replace them with sourced paths (for example NGFS Phase V scenario carbon prices) and record the source in the config.
 - **Data vintage.** WRI stopped maintaining the Global Power Plant Database after v1.3.0. Plants built, retired or converted since then are not reflected, and the database covers about 956 GW of Chinese coal, not the whole fleet.
-- **Modelled generation.** GPPD's 2017 generation for Chinese coal plants is an estimate from a uniform capacity factor, not reported output. You can override it per fuel in the config.
+- **Modelled generation.** GPPD's 2017 generation for Chinese coal plants is an estimate from one uniform capacity factor (about 56% for every plant), not reported output. You can override it per fuel, or per fuel and province, under `generation:` in the config. Carbon cost and revenue both scale with generation, so an override changes absolute exposure (tonnes, CNY bn) and the province ranking, but not a plant's flag or break-even price.
 - **Uniform economics.** One national tariff, margin and pass-through rate per country. In reality these vary by province, contract and plant, so plant-level flags differ only by fuel and vintage; absolute exposure differs by size.
 - **Scope.** Direct CO2 from combustion only: no methane, no coal-price feedback, no capacity payments, and no CCUS or retrofit options.
 
@@ -93,6 +93,7 @@ Code is MIT-licensed. Built by Michael S H Xiang (Columbia–Trinity Dual BA, Ea
 ## Roadmap
 
 - [ ] Replace illustrative paths with NGFS Phase V carbon prices
-- [ ] Province-level tariffs and capacity factors
+- [ ] Province-level tariffs
+- [x] Province-level capacity-factor overrides (config option; no sourced values yet)
 - [x] Sensitivity table and chart: break-even vs margin and pass-through
 - [ ] Map output using an approved basemap

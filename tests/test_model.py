@@ -106,3 +106,55 @@ def test_breakeven_sensitivity_grid():
     grid = sens.pivot(index="ebitda_margin", columns="pass_through", values="breakeven_capacity_weighted")
     assert (grid.diff(axis=0).dropna() > 0).all().all()
     assert (grid.diff(axis=1).dropna(axis=1) > 0).all().all()
+
+
+def _gen_cfg(**overrides):
+    return {**CFG, "generation": {**CFG["generation"], **overrides}}
+
+
+def _two_province_plants():
+    df = _plants()
+    df.loc[0, "province"] = "Other"   # old coal moves to a second province
+    return df
+
+
+def test_province_capacity_factor_override():
+    base = emissions.add_emissions(_two_province_plants(), CFG)
+    cfg = _gen_cfg(capacity_factor_by_province={"Coal": {"Test": 0.40}})
+    df = emissions.add_emissions(_two_province_plants(), cfg)
+    # New coal in "Test": 1,000 MW x 8,760 h x 0.40
+    assert df.loc[1, "generation_mwh"] == pytest.approx(3_504_000)
+    assert df.loc[1, "emissions_tco2"] == pytest.approx(3_504_000 * df.loc[1, "ef_tco2_mwh"])
+    # Coal in "Other" and gas in "Test" keep their GPPD generation
+    assert df.loc[0, "generation_mwh"] == base.loc[0, "generation_mwh"]
+    assert df.loc[2, "generation_mwh"] == base.loc[2, "generation_mwh"]
+
+
+def test_province_override_wins_over_fuel_override():
+    cfg = _gen_cfg(capacity_factor_override={"Coal": 0.60},
+                   capacity_factor_by_province={"Coal": {"Test": 0.40}})
+    df = emissions.add_emissions(_two_province_plants(), cfg)
+    assert df.loc[0, "generation_mwh"] == pytest.approx(1000 * 8760 * 0.60)  # fuel-wide value
+    assert df.loc[1, "generation_mwh"] == pytest.approx(1000 * 8760 * 0.40)  # province value
+
+
+def test_capacity_factor_scales_cost_but_not_flags():
+    # Carbon cost and revenue both scale with generation, so cost share, flags and
+    # break-even depend only on the emission factor, not on the capacity factor.
+    base = stress.stress(emissions.add_emissions(_plants(), CFG), CFG)
+    cfg = _gen_cfg(capacity_factor_by_province={"Coal": {"Test": 0.40}})
+    res = stress.stress(emissions.add_emissions(_plants(), cfg), cfg)
+    b, r = base[base["gppd_idnr"] == "b"].iloc[0], res[res["gppd_idnr"] == "b"].iloc[0]
+    assert r["carbon_cost"] == pytest.approx(b["carbon_cost"] * 3504 / 5000)
+    assert r["cost_share"] == pytest.approx(b["cost_share"])
+    assert r["flag"] == b["flag"] and r["breakeven_price"] == pytest.approx(b["breakeven_price"])
+
+
+@pytest.mark.parametrize("by_province, message", [
+    ({"Coal": {"Tset": 0.40}}, "no plants in"),               # misspelt province
+    ({"Coal": {"Test": 1.20}}, "at most 1"),                  # more hours than in a year
+    ({"Coal": {"Test": 0.0}}, "above 0"),
+])
+def test_bad_province_override_is_rejected(by_province, message):
+    with pytest.raises(ValueError, match=message):
+        emissions.add_emissions(_plants(), _gen_cfg(capacity_factor_by_province=by_province))

@@ -29,14 +29,43 @@ def emission_factor(fuel: str, efficiency: float, cfg: dict) -> float:
     return kg_per_gj * GJ_PER_MWH / 1000 / efficiency
 
 
+def _check_capacity_factor(cf: float, where: str) -> None:
+    """A capacity factor is a share of the year at full output, so it must be in (0, 1]."""
+    if not 0 < cf <= 1:
+        raise ValueError(f"capacity factor for {where} must be above 0 and at most 1, got {cf}")
+
+
 def add_emissions(plants: pd.DataFrame, cfg: dict) -> pd.DataFrame:
-    """Add generation_mwh, efficiency, ef_tco2_mwh and emissions_tco2 columns."""
+    """Add generation_mwh, efficiency, ef_tco2_mwh and emissions_tco2 columns.
+
+    Generation comes from the GPPD column in the config unless a capacity factor
+    override applies. Most specific wins: a province override for that fuel, then a
+    fuel-wide override, then the GPPD estimate.
+    """
     df = plants.copy()
     gen_cfg = cfg["generation"]
     df["generation_mwh"] = df[gen_cfg["column"]] * 1000
     for fuel, cf in (gen_cfg.get("capacity_factor_override") or {}).items():
+        _check_capacity_factor(cf, fuel)
         mask = df["primary_fuel"] == fuel
         df.loc[mask, "generation_mwh"] = df.loc[mask, "capacity_mw"] * 8760 * cf
+
+    by_province = gen_cfg.get("capacity_factor_by_province") or {}
+    if by_province:
+        if "province" not in df.columns:
+            raise ValueError("capacity_factor_by_province needs plants with a province column "
+                             "(run geo.assign_provinces first)")
+        known = set(df["province"])
+        for fuel, provinces in by_province.items():
+            # A misspelt province would otherwise match no plants and change nothing silently.
+            unknown = sorted(set(provinces) - known)
+            if unknown:
+                raise ValueError(f"capacity_factor_by_province.{fuel}: no plants in {unknown}; "
+                                 "use the English names in outputs/province_exposure.csv")
+            for province, cf in provinces.items():
+                _check_capacity_factor(cf, f"{fuel} in {province}")
+                mask = (df["primary_fuel"] == fuel) & (df["province"] == province)
+                df.loc[mask, "generation_mwh"] = df.loc[mask, "capacity_mw"] * 8760 * cf
     df["generation_mwh"] = df["generation_mwh"].fillna(0.0)
 
     df["efficiency"] = [

@@ -35,9 +35,15 @@ efficiency:
 # Generation source. GPPD's estimated_generation_gwh_2017 is a modelled value
 # (for Chinese coal plants a uniform capacity factor). Set `capacity_factor_override`
 # per fuel to replace it with your own assumption (fraction of hours at full output).
+# Set `capacity_factor_by_province` to override it for one fuel in named provinces only;
+# it wins over the per-fuel override for those plants. Province names must match the
+# English names in outputs/province_exposure.csv (e.g. "Inner Mongolia").
+# Both are empty by default, so every plant uses the GPPD estimate.
+# Record a source next to any value you add.
 generation:
   column: estimated_generation_gwh_2017
-  capacity_factor_override: {}   # e.g. {Coal: 0.50}
+  capacity_factor_override: {}     # syntax: {Coal: 0.50}
+  capacity_factor_by_province: {}  # syntax: {Coal: {Shandong: 0.50, Yunnan: 0.40}}
 
 # Revenue proxy: generation x average on-grid tariff. ASSUMPTION.
 # pass_through = share of carbon cost a plant recovers through higher power prices.
