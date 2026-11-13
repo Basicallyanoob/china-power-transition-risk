@@ -158,3 +158,61 @@ def test_capacity_factor_scales_cost_but_not_flags():
 def test_bad_province_override_is_rejected(by_province, message):
     with pytest.raises(ValueError, match=message):
         emissions.add_emissions(_plants(), _gen_cfg(capacity_factor_by_province=by_province))
+
+
+# Years to break-even: two study years, so the path between them is interpolated.
+#   ramp:  price 100 -> 220, paid share 0.2 -> 0.7 (2025 -> 2030)
+#   flat:  50 x 0.5 = 25 every year (never reaches any plant's break-even)
+#   high:  300 x 0.5 = 150 from the start (every plant already cash-negative)
+def _ytb_cfg():
+    def path(p0, p1, s0, s1):
+        return {"CHN": {"carbon_price": {2025: p0, 2030: p1}, "uncovered_share": {2025: s0, 2030: s1}}}
+    return {**CFG, "study_years": [2025, 2030], "headline": {"scenario": "ramp", "year": 2030},
+            "scenarios": {"ramp": {"label": "ramp", **path(100, 220, 0.2, 0.7)},
+                          "flat": {"label": "flat", **path(50, 50, 0.5, 0.5)},
+                          "high": {"label": "high", **path(300, 300, 0.5, 0.5)}}}
+
+
+def test_annual_effective_price_interpolates_price_and_share_separately():
+    eff = stress.annual_effective_price(_ytb_cfg()["scenarios"]["ramp"]["CHN"], [2025, 2030])
+    assert list(eff.index) == list(range(2025, 2031))
+    # 2027: price 100 + 2 x 24 = 148, share 0.2 + 2 x 0.1 = 0.4 -> 59.2 (not the straight-line 68)
+    assert eff[2027] == pytest.approx(148 * 0.4)
+    assert eff[2025] == pytest.approx(20) and eff[2030] == pytest.approx(154)
+
+
+def test_breakeven_years_by_plant_and_scenario():
+    cfg = _ytb_cfg()
+    res = stress.stress(emissions.add_emissions(_plants(), cfg), cfg)
+    by = stress.breakeven_years(res, cfg).set_index(["scenario", "gppd_idnr"])["breakeven_year"]
+    # Break-even prices: old coal 0.15 x 400 / 1.0320 = 58.1, new coal 70.5, gas 148.5 CNY/t.
+    # Ramp path: 2026 37.2, 2027 59.2, 2028 86.0, 2029 117.6, 2030 154.0
+    assert by["ramp", "a"] == 2027   # old, least efficient coal goes first
+    assert by["ramp", "b"] == 2028
+    assert by["ramp", "c"] == 2030   # gas only just crosses in the last study year
+    assert by["flat"].isna().all()   # 25 CNY/t never reaches break-even
+    assert (by["high"] == 2025).all()
+
+
+def test_breakeven_year_matches_flags_at_study_years():
+    # On a rising path, a plant is flagged High in a study year exactly when it has
+    # reached break-even by then.
+    cfg = _ytb_cfg()
+    res = stress.stress(emissions.add_emissions(_plants(), cfg), cfg)
+    by = stress.breakeven_years(res, cfg)
+    m = res.merge(by, on=["gppd_idnr", "scenario"])
+    assert ((m["flag"] == "High") == (m["breakeven_year"] <= m["year"])).all()
+
+
+def test_years_to_breakeven_table():
+    cfg = _ytb_cfg()
+    res = stress.stress(emissions.add_emissions(_plants(), cfg), cfg)
+    table = report.years_to_breakeven(res, stress.breakeven_years(res, cfg), cfg)
+    assert list(table["gppd_idnr"]) == ["a", "b", "c"]   # wind excluded; soonest first under "ramp"
+    assert list(table.columns[-3:]) == [
+        "years_to_breakeven_ramp", "years_to_breakeven_flat", "years_to_breakeven_high",
+    ]
+    row = table.set_index("gppd_idnr").loc["b"]
+    assert row["years_to_breakeven_ramp"] == 3        # 2028 - 2025
+    assert math.isnan(row["years_to_breakeven_flat"])  # blank in the CSV
+    assert row["years_to_breakeven_high"] == 0

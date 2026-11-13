@@ -1,6 +1,7 @@
 """Carbon-cost stress test: scenario x year, plant by plant."""
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 
@@ -65,3 +66,40 @@ def stress(plants: pd.DataFrame, cfg: dict) -> pd.DataFrame:
         labels=["Low", "Watch", "High"], right=False,
     ).astype(str)
     return res
+
+
+def annual_effective_price(path: dict, years: list[int]) -> pd.Series:
+    """Effective carbon price (price x uncovered share) for every year from the first to the last study year.
+
+    The config gives the price and the uncovered share only at study years.
+    ASSUMPTION: each moves in a straight line between study years. They are
+    interpolated separately and then multiplied, so the effective price is not
+    itself a straight line. Returns a Series indexed by calendar year.
+    """
+    span = range(min(years), max(years) + 1)
+    price = pd.Series({y: path["carbon_price"][y] for y in years}, dtype=float).reindex(span).interpolate()
+    paid = pd.Series({y: path["uncovered_share"][y] for y in years}, dtype=float).reindex(span).interpolate()
+    return price * paid
+
+
+def breakeven_years(res: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """One row per fossil plant x scenario: the first year its absorbed carbon cost uses up its margin.
+
+    breakeven_year     = first calendar year in which the (interpolated) effective carbon
+                         price reaches the plant's break-even price
+    years_to_breakeven = breakeven_year - first study year (0 = already cash-negative then)
+    Both are NaN if the price never reaches break-even within the study years.
+    """
+    years = cfg["study_years"]
+    one = res.drop_duplicates(["gppd_idnr", "scenario"])
+    rows = []
+    for (scen, iso3), g in one.groupby(["scenario", "country"], sort=False):
+        eff = annual_effective_price(cfg["scenarios"][scen][iso3], years)
+        # Plants down the rows, years across the columns: True where price >= break-even.
+        hit = eff.to_numpy()[None, :] >= g["breakeven_price"].to_numpy()[:, None]
+        first = eff.index.to_numpy()[hit.argmax(axis=1)]
+        out = g[["gppd_idnr", "scenario"]].copy()
+        out["breakeven_year"] = np.where(hit.any(axis=1), first, np.nan)
+        out["years_to_breakeven"] = out["breakeven_year"] - min(years)
+        rows.append(out)
+    return pd.concat(rows, ignore_index=True)

@@ -36,6 +36,7 @@ def run(plants: pd.DataFrame, admin1: gpd.GeoDataFrame, cfg: dict, out: Path) ->
     watch = report.watchlist(res, h_scen, h_year)
     be = report.breakeven_by_vintage(res)
     sens = report.breakeven_sensitivity(res, cfg)
+    ytb = report.years_to_breakeven(res, stress.breakeven_years(res, cfg), cfg)
 
     fleet.to_csv(out / "fleet_summary.csv", index=False)
     path.to_csv(out / "scenario_paths.csv", index=False)
@@ -44,6 +45,7 @@ def run(plants: pd.DataFrame, admin1: gpd.GeoDataFrame, cfg: dict, out: Path) ->
     watch.to_csv(out / "plant_watchlist_top50.csv", index=False, encoding="utf-8-sig")
     be.to_csv(out / "breakeven_by_vintage.csv", index=False)
     sens.to_csv(out / "breakeven_sensitivity.csv", index=False)
+    ytb.to_csv(out / "plant_years_to_breakeven.csv", index=False, encoding="utf-8-sig")
 
     report.fig_scenarios(path, cfg, figs / "flagged_capacity_by_scenario.png")
     report.fig_breakeven(res, be, cfg, figs / "breakeven_vs_scenarios.png")

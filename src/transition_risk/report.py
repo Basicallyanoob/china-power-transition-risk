@@ -95,6 +95,27 @@ def breakeven_by_vintage(res: pd.DataFrame) -> pd.DataFrame:
     return g.sort_values(["country", "breakeven_effective_price"]).round(2)
 
 
+def years_to_breakeven(res: pd.DataFrame, by: pd.DataFrame, cfg: dict) -> pd.DataFrame:
+    """One row per fossil plant: years until it turns cash-negative under each scenario.
+
+    `by` is stress.breakeven_years(). Years count from the first study year; a blank
+    cell means the effective price stays below the plant's break-even through the last
+    study year. Sorted by country, then soonest under the headline scenario.
+    """
+    wide = by.pivot(index="gppd_idnr", columns="scenario", values="years_to_breakeven")
+    wide = wide[list(cfg["scenarios"])]
+    wide.columns = [f"years_to_breakeven_{s}" for s in wide.columns]
+    cols = [
+        "gppd_idnr", "name", "country", "currency", "province", "province_zh", "owner",
+        "primary_fuel", "capacity_mw", "commissioning_year", "ef_tco2_mwh", "breakeven_price",
+    ]
+    one = res.drop_duplicates("gppd_idnr")[cols].rename(columns={"breakeven_price": "breakeven_effective_price"})
+    out = one.merge(wide, left_on="gppd_idnr", right_index=True, how="left")
+    head = f"years_to_breakeven_{cfg['headline']['scenario']}"
+    out = out.sort_values(["country", head, "capacity_mw"], ascending=[True, True, False], na_position="last")
+    return out.round(3)
+
+
 def breakeven_sensitivity(res: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     """Break-even effective carbon price over a grid of EBITDA margin x pass-through.
 

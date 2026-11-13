@@ -36,6 +36,18 @@ The 60–72 CNY/t band rests on two unsourced assumptions: a 15% EBITDA margin a
 
 Break-even = margin × tariff ÷ (emission factor × (1 − pass-through)). It therefore moves one-for-one with the margin: going from 10% to 20% doubles it (capacity-weighted 41 → 82 CNY/t with no pass-through). Pass-through acts through 1 ÷ (1 − pass-through), so raising it from 0% to 30% lifts break-even by about 43% (61 → 88 CNY/t at a 15% margin). Across the whole grid, plant-level break-even runs from **36 to 124 CNY/t**. The scenario conclusions mostly hold anyway. The illustrative net-zero path's 2030 effective price (300 CNY/t × 40% paid = 120) is above every grid point except the most efficient plants at 20% margin and 30% pass-through. The current-policies path reaches only 36 CNY/t by 2040, which touches just the least efficient plants in the harshest corner of the grid (10% margin, no pass-through). The margin is the assumption to source first.
 
+## When does each plant turn cash-negative?
+
+[`outputs/plant_years_to_breakeven.csv`](outputs/plant_years_to_breakeven.csv) gives every fossil plant's **years to break-even** under each scenario: the years from 2025 until the effective carbon price first reaches that plant's break-even price. A blank cell means it doesn't happen by 2040. The config gives prices and paid shares only for 2025, 2030, 2035 and 2040. In between, each is assumed to move in a straight line (ASSUMPTION), and the two are multiplied year by year.
+
+| Scenario (illustrative) | China coal | China gas | Ireland coal | Ireland gas |
+|---|---:|---:|---:|---:|
+| Current policies | not by 2040 | not by 2040 | 1 (2026) | not by 2040 |
+| Delayed transition | 8 (2033) | 10 (2035) | 1 (2026) | 10 (2035) |
+| Net zero 2060 | 4 (2029) | 6 (2031) | 1 (2026) | 8 (2033) |
+
+Every Chinese coal plant crosses in the same year within each scenario. That is a result, not a bug. The fleet's break-even band is only 60–72 CNY/t wide. In the crossing year the illustrative effective price rises by about 29 CNY/t (net zero, 2028→2029) or 33 CNY/t (delayed transition, 2032→2033), so the whole band is crossed in a single step. The timing of the free-allocation cut, not plant vintage, decides when the fleet turns cash-negative. Plant-level dates will spread out once tariffs vary by province and the paths come from NGFS.
+
 ## How it works
 
 ```
@@ -70,7 +82,7 @@ python -m transition_risk --scenario delayed_transition --year 2040   # writes o
 
 `--scenario` takes any scenario defined in the config (`current_policies`, `delayed_transition`, `net_zero`) and `--year` any study year (2025, 2030, 2035, 2040). These runs go to their own folder, so the committed `outputs/` always matches the config. Use `--out` to choose a different folder.
 
-Outputs: `plant_watchlist_top50.csv`, `province_exposure.csv`, `owner_exposure.csv`, `breakeven_by_vintage.csv`, `breakeven_sensitivity.csv`, `scenario_paths.csv`, `fleet_summary.csv` and the figures in `outputs/figures/`. CSVs with Chinese province names are UTF-8 with BOM so they open cleanly in Excel.
+Outputs: `plant_watchlist_top50.csv`, `province_exposure.csv`, `owner_exposure.csv`, `breakeven_by_vintage.csv`, `breakeven_sensitivity.csv`, `plant_years_to_breakeven.csv`, `scenario_paths.csv`, `fleet_summary.csv` and the figures in `outputs/figures/`. CSVs with Chinese province names are UTF-8 with BOM so they open cleanly in Excel.
 
 ## Limitations
 
@@ -96,4 +108,5 @@ Code is MIT-licensed. Built by Michael S H Xiang (Columbia–Trinity Dual BA, Ea
 - [ ] Province-level tariffs
 - [x] Province-level capacity-factor overrides (config option; no sourced values yet)
 - [x] Sensitivity table and chart: break-even vs margin and pass-through
+- [x] Years to break-even per plant under each scenario
 - [ ] Map output using an approved basemap

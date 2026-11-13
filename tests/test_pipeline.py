@@ -73,6 +73,12 @@ EXPECTED_COLUMNS = {
         "country", "currency", "primary_fuel", "ebitda_margin", "pass_through", "is_base_case",
         "breakeven_least_efficient", "breakeven_capacity_weighted", "breakeven_most_efficient",
     ],
+    "plant_years_to_breakeven.csv": [
+        "gppd_idnr", "name", "country", "currency", "province", "province_zh", "owner",
+        "primary_fuel", "capacity_mw", "commissioning_year", "ef_tco2_mwh",
+        "breakeven_effective_price", "years_to_breakeven_current_policies",
+        "years_to_breakeven_delayed_transition", "years_to_breakeven_net_zero",
+    ],
 }
 
 # Expected row counts for the sample, worked out by hand:
@@ -84,6 +90,7 @@ EXPECTED_COLUMNS = {
 #   watchlist:       all 13 Chinese fossil plants (fewer than 50)
 #   break-even:      China coal 3 efficiency bands + gas + oil, Ireland coal + gas + oil = 8 rows
 #   sensitivity:     3 EBITDA margins x 3 pass-through rates in the config grid = 9 rows
+#   years to b/e:    one row per stressed fossil plant, both countries = 16 rows
 EXPECTED_ROWS = {
     "fleet_summary.csv": 9,
     "scenario_paths.csv": 24,
@@ -92,6 +99,7 @@ EXPECTED_ROWS = {
     "plant_watchlist_top50.csv": 13,
     "breakeven_by_vintage.csv": 8,
     "breakeven_sensitivity.csv": 9,
+    "plant_years_to_breakeven.csv": 16,
 }
 
 FIGURES = [
